@@ -15,6 +15,10 @@ Please submit all issues and pull requests to the [TibiaJS/sprites-extractor](ht
 ## Support
 If you have any problem or suggestion please open an issue [here](http://github.com/TibiaJS/sprites-extractor/issues).
 
+## References
+* http://tpforums.org/forum/threads/5031-Tibia-Sprite-File-Structure
+* https://code.google.com/p/tibiaapi/source/browse/trunk/tibiaapi/Util/SpriteReader.cs
+
 ## License
 The BSD License
 
