@@ -28,7 +28,6 @@ base         = function() {
   for(i = 0; i < 32; i++) {
     for(j = 0; j < 32; j++) {
       image.setPixel(i,j, baseColor);
-      image.setPixel(i,j, baseColor);
     }
   }
 
