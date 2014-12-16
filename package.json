@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/TibiaJS/sprites-extractor",
   "dependencies": {
+    "async": "^0.9.0",
     "buffer-reader": "0.0.2",
     "pngjs-image": "^0.9.3"
   }

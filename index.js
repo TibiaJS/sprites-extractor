@@ -1,4 +1,4 @@
-var fs, BufferReader, PNGImage, sprFile, baseColor, base;
+var fs, BufferReader, PNGImage, sprFile, baseColor, base, async, exportImg;
 
 fs           = require('fs');
 sprFile      = process.argv[2];
@@ -20,10 +20,11 @@ if(!fs.existsSync(sprFile)) {
 
 BufferReader = require('buffer-reader');
 PNGImage     = require('pngjs-image');
+async        = require('async');
 baseColor    = {red: 255, green: 0, blue: 255, alpha: 255};
 
 // Create a 32x32 with pink bg
-base         = function() {
+base = function(spriteId) {
   var image = PNGImage.createImage(32, 32);
   for(i = 0; i < 32; i++) {
     for(j = 0; j < 32; j++) {
@@ -31,8 +32,19 @@ base         = function() {
     }
   }
 
-  return image;
+  return {filename: spriteId, img: image};
 }
+
+exportImg = function(obj, cb) {
+  obj.img.writeImage('./out/' + obj.filename + '.png', function() {
+    cb();
+  });
+};
+
+var queue = async.queue(exportImg, 10);
+queue.drain = function() {
+    console.log("Done!");
+};
 
 fs.readFile(sprFile, function (err, buffer) {
   if (err) throw err;
@@ -50,7 +62,7 @@ fs.readFile(sprFile, function (err, buffer) {
   for(var spriteId = 0; spriteId < info.size; spriteId++) {
     if(spriteId < 2) continue;
 
-    var image = base();
+    var obj = base(spriteId);
 
     var formula = 6 + (spriteId - 1) * 4;
 
@@ -69,7 +81,7 @@ fs.readFile(sprFile, function (err, buffer) {
       currentPixel += transparentPixels;
       for (var i = 0; i < coloredPixels; i++)
       {
-        image.setPixel(
+        obj.img.setPixel(
           parseInt(currentPixel % size),
           parseInt(currentPixel / size),
           {red:reader.nextUInt8(), green:reader.nextUInt8(), blue:reader.nextUInt8(), alpha:255});
@@ -77,12 +89,7 @@ fs.readFile(sprFile, function (err, buffer) {
       }
     }
 
-    image.writeImage('./out/' + spriteId + '.png', function() {});
-
-    // Caution: when removing the bottom line, it is possible to happen memory leak and blow up your pc.
-    if(spriteId == 15) break;
+    queue.push(obj);
   }
-
-  console.log('Done!');
 
 });
