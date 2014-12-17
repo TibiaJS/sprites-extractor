@@ -9,6 +9,11 @@ JavaScript Sprite Extractor for Tibia written in NodeJS.
 3. Just type `node index.js <Tibia.spr location>`
 4. Check out a `out` folder
 
+## Supported Version
+  * 7.x
+  * 8.x
+  * 9.x
+
 ## Contributing
 Please submit all issues and pull requests to the [TibiaJS/sprites-extractor](http://github.com/TibiaJS/sprites-extractor) repository!
 
