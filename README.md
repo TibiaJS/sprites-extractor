@@ -2,7 +2,7 @@
 
 JavaScript Sprite Extractor for Tibia written in NodeJS.
 
-## Getting Started?
+## Getting Started
 
 1. Clone this repo
 2. Install dependencies using `npm install`
