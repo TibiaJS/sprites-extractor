@@ -6,7 +6,7 @@ JavaScript Sprite Extractor for Tibia written in NodeJS.
 
 1. Clone this repo
 2. Install dependencies using `npm install`
-3. Just type `node index.js <Tibia.spr location>`
+3. Just type `node index.js <Tibia.spr location> [Output Dir]`
 4. Check out a `out` folder
 
 ## Supported Version
