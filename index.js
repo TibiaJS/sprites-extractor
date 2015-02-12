@@ -1,11 +1,26 @@
-var fs, BufferReader, PNGImage, sprFile, baseColor, base, async, exportImg;
+var fs, BufferReader, PNGImage, sprFile, baseColor, base, async, exportImg, outDir;
 
 fs           = require('fs');
 sprFile      = process.argv[2];
+outDir       = process.argv[3];
 
-// Checking if pass one argument
+// Checking if pass first argument
 if(sprFile && sprFile.length < 6) {
   throw new Error('Missing Tibia.spr.');
+}
+
+// Check if second arg passed otherwise set to default output
+if(!outDir) {
+  outDir = './out/';
+}
+
+// Check if last char is '/'
+if(outDir.charAt(outDir.length-1) !='/') {
+  outDir = outDir + '/';
+}
+
+if(!fs.existsSync(outDir)) {
+  fs.mkdirSync(outDir);
 }
 
 // Checking if extension is .spr
@@ -36,7 +51,7 @@ base = function(spriteId) {
 }
 
 exportImg = function(obj, cb) {
-  obj.img.writeImage('./out/' + obj.filename + '.png', function() {
+  obj.img.writeImage(outDir + obj.filename + '.png', function() {
     cb();
   });
 };
