@@ -62,6 +62,10 @@ exportImg = function(obj, cb) {
 
 var queue = async.queue(exportImg, 10);
 
+queue.drain = function() {
+  console.log("\n");
+}
+
 fs.readFile(sprFile, function (err, buffer) {
   if (err) throw err;
 
