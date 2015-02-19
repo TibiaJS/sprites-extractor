@@ -94,8 +94,6 @@ fs.readFile(sprFile, function (err, buffer) {
 
     var currentPixel = 0;
     var size = 32;
-    var pixels = [];
-    var colors = [];
     while(reader.tell() < offset) {
       var transparentPixels = reader.nextUInt16LE();
       var coloredPixels = reader.nextUInt16LE();
