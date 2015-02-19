@@ -1,11 +1,11 @@
-var fs, BufferReader, PNGImage, sprFile, baseColor, base, async, exportImg, outDir;
+var fs, BufferReader, PNGImage, MultiBar, mbars, bars, sprFile, baseColor, base, async, exportImg, outDir;
 
-fs           = require('fs');
-sprFile      = process.argv[2];
-outDir       = process.argv[3];
+fs      = require('fs');
+sprFile = process.argv[2];
+outDir  = process.argv[3];
 
 // Checking if pass first argument
-if(sprFile && sprFile.length < 6) {
+if(!sprFile || sprFile.length < 6) {
   throw new Error('Missing Tibia.spr.');
 }
 
@@ -33,6 +33,9 @@ if(!fs.existsSync(sprFile)) {
   throw new Error('File not found: ' + sprFile);
 }
 
+MultiBar     = require('./multibar.js');
+mbars        = new MultiBar();
+bars         = [];
 BufferReader = require('buffer-reader');
 PNGImage     = require('pngjs-image');
 async        = require('async');
@@ -53,13 +56,11 @@ base = function(spriteId) {
 exportImg = function(obj, cb) {
   obj.img.writeImage(outDir + obj.filename + '.png', function() {
     cb();
+    bars[1].tick();
   });
 };
 
 var queue = async.queue(exportImg, 10);
-queue.drain = function() {
-    console.log("Done!");
-};
 
 fs.readFile(sprFile, function (err, buffer) {
   if (err) throw err;
@@ -74,11 +75,13 @@ fs.readFile(sprFile, function (err, buffer) {
   console.log("Signature: " + info.signature);
   console.log("  Sprites: " + info.size);
 
+  bars.push(mbars.newBar('  Parsing: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
+  bars.push(mbars.newBar('Exporting: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
+
   for(var spriteId = 0; spriteId < info.size; spriteId++) {
     if(spriteId < 2) continue;
 
     var obj = base(spriteId);
-
     var formula = 6 + (spriteId - 1) * 4;
 
     reader.seek(formula);
@@ -105,6 +108,7 @@ fs.readFile(sprFile, function (err, buffer) {
     }
 
     queue.push(obj);
+    bars[0].tick();
   }
 
 });
