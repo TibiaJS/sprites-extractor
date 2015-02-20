@@ -70,25 +70,32 @@ fs.readFile(sprFile, function (err, buffer) {
   if (err) throw err;
 
   var reader = new BufferReader(buffer),
-
-  info = {
-    signature: reader.nextUInt32LE(),
-    size: reader.nextUInt16LE(),
-  };
+      count = 0,
+      info = {
+        signature: reader.nextUInt32LE(),
+        size: reader.nextUInt16LE(),
+      };
 
   console.log("Signature: " + info.signature);
   console.log("  Sprites: " + info.size);
 
   bars.push(mbars.newBar('  Parsing: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
-  bars.push(mbars.newBar('Exporting: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
 
   for(var spriteId = 1; spriteId < info.size; spriteId++) {
 
     var obj = base(spriteId);
     var formula = 6 + (spriteId - 1) * 4;
-
     reader.seek(formula);
-    reader.seek(reader.nextUInt32LE() + 3);
+    
+    var address = reader.nextUInt32LE();
+    if (address == 0) { // Address 0 always is an empty sprite.
+      bars[0].tick();
+      continue;
+    }
+    reader.seek(address);
+    
+    // Skipping color key.
+    reader.move(3);
 
     var offset = reader.tell() + reader.nextUInt16LE();
 
@@ -108,8 +115,10 @@ fs.readFile(sprFile, function (err, buffer) {
       }
     }
 
+    count++;
     queue.push(obj);
     bars[0].tick();
   }
 
+  bars.push(mbars.newBar('Exporting: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: count }));
 });
