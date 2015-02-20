@@ -82,8 +82,7 @@ fs.readFile(sprFile, function (err, buffer) {
   bars.push(mbars.newBar('  Parsing: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
   bars.push(mbars.newBar('Exporting: [:bar] :percent | ETA: :eta | Time Elapsed: :elapsed', { complete: '=', incomplete: ' ', clear: true, width: 40, total: info.size }));
 
-  for(var spriteId = 0; spriteId < info.size; spriteId++) {
-    if(spriteId < 2) continue;
+  for(var spriteId = 1; spriteId < info.size; spriteId++) {
 
     var obj = base(spriteId);
     var formula = 6 + (spriteId - 1) * 4;
@@ -95,8 +94,6 @@ fs.readFile(sprFile, function (err, buffer) {
 
     var currentPixel = 0;
     var size = 32;
-    var pixels = [];
-    var colors = [];
     while(reader.tell() < offset) {
       var transparentPixels = reader.nextUInt16LE();
       var coloredPixels = reader.nextUInt16LE();
